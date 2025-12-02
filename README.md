@@ -14,7 +14,9 @@ For this project, we were given a dataset from the Prestige Cars Database. The o
 
 ## Link To GROUP Discussion 
 
-  
+## GANT Chart
+<img width="1660" height="660" alt="image" src="https://github.com/user-attachments/assets/025feb98-a085-4af0-acc7-90bbd49997b6" />
+
 ## Tools & Technologies
 
 | Tool | Purpose |
