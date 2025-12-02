@@ -13,6 +13,7 @@ For this project, we were given a dataset from the Prestige Cars Database. The o
 
 
 ## Link To GROUP Discussion 
+https://youtu.be/QjoPpg2Zqg0
 
 ## To Do List
 <img width="1313" height="691" alt="image" src="https://github.com/user-attachments/assets/ea12ce67-c487-4a89-bcd8-bbc3166575ea" />
