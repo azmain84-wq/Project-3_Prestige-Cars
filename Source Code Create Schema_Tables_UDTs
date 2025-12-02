@@ -1,0 +1,75 @@
+CREATE SCHEMA Dealership;
+
+
+
+CREATE TYPE Dealership.IDType FROM INT NOT NULL;
+CREATE TYPE Dealership.SurrogateKey FROM INT;
+CREATE TYPE Dealership.CurrencyType FROM DECIMAL(10,2) NOT NULL;
+CREATE TYPE Dealership.DateType FROM DATE NOT NULL;
+CREATE TYPE Dealership.YearType FROM SMALLINT NOT NULL;
+CREATE TYPE Dealership.String100Type FROM VARCHAR(100) NOT NULL;
+CREATE TYPE Dealership.String50Type FROM VARCHAR(50) NOT NULL;
+CREATE TYPE Dealership.CountryName FROM VARCHAR(50) NOT NULL;
+
+
+
+CREATE TABLE Dealership.VehicleInfo (
+    CarID          Dealership.SurrogateKey PRIMARY KEY,
+    VIN            Dealership.String50Type NOT NULL UNIQUE, 
+    Make           Dealership.String50Type NOT NULL,
+    Model          Dealership.String50Type NOT NULL,
+    Year           Dealership.YearType NOT NULL,
+    BasePrice      Dealership.CurrencyType NOT NULL,
+    BodyType       Dealership.String50Type NULL,
+    CountryOfOrigin Dealership.CountryName NULL
+);
+GO
+
+CREATE TABLE Dealership.CustomerInfo (
+    PersonID      Dealership.SurrogateKey PRIMARY KEY, 
+    CarID         Dealership.SurrogateKey NOT NULL,    -- FK to VehicleInfo
+    SalesRep      Dealership.String100Type NOT NULL,
+    SaleDate      Dealership.DateType NOT NULL,
+    SalePrice     Dealership.CurrencyType NOT NULL,
+    Country       Dealership.CountryName NULL,
+
+    CONSTRAINT FK_CustomerInfo_VehicleInfo
+        FOREIGN KEY (CarID)
+        REFERENCES Dealership.VehicleInfo(CarID)
+);
+GO
+    
+
+
+
+
+CREATE TABLE Dealership.ServiceDept (
+    ServiceID   Dealership.SurrogateKey   PRIMARY KEY,      -- service record ID
+    CarID       Dealership.SurrogateKey   NOT NULL,         -- FK to VehicleInfo
+    PersonID    Dealership.SurrogateKey   NOT NULL,         -- FK to CustomerInfo
+    Model       Dealership.String50Type   NOT NULL,         -- car model for this service
+    ServiceDate Dealership.DateType       NOT NULL,         -- date of service
+    Warranty    CHAR(1)                   NOT NULL,
+    Price       Dealership.CurrencyType   NOT NULL,
+
+    -- Foreign keys
+    CONSTRAINT FK_ServiceDept_VehicleInfo
+        FOREIGN KEY (CarID)
+        REFERENCES Dealership.VehicleInfo(CarID),
+
+    CONSTRAINT FK_ServiceDept_CustomerInfo
+        FOREIGN KEY (PersonID)
+        REFERENCES Dealership.CustomerInfo(PersonID),
+
+    -- Warranty must be only Y or N
+    CONSTRAINT CK_ServiceDept_Warranty_YesNo
+        CHECK (Warranty IN ('Y','N')),
+
+    -- Enforce business rule: if warranty = Y -> price = 0, else price > 0
+    CONSTRAINT CK_ServiceDept_Warranty_PriceRule
+        CHECK (
+            (Warranty = 'Y' AND Price = 0) OR
+            (Warranty = 'N' AND Price > 0)
+        )
+);
+GO
